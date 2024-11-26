@@ -40,7 +40,7 @@ namespace UserController{
                 return ctx.json({message: 'User not found'},404);
             }
 
-            const isPasswordValid = bcrypt.compare(
+            const isPasswordValid = await bcrypt.compare(
                 payload.password,
                 user.password
             );
@@ -50,7 +50,7 @@ namespace UserController{
             }
 
             if(isPasswordValid){
-                return ctx.json({message: 'User logged in'},200);
+                return ctx.json({message: 'User logged in',user},200);
             }
 
         }catch(err){
