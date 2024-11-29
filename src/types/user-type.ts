@@ -9,3 +9,5 @@ interface IUser{
         default: false;
     };
 }
+
+export default IUser;
