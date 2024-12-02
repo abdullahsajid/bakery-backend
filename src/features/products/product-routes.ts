@@ -1,9 +1,10 @@
 import { Hono } from "hono";
 import ProductController from "./product-controller";
+import { auth } from "../../middleware/auth";
 export const productRoutes = new Hono();
 
-productRoutes.post('/product',ProductController.createProduct);
-productRoutes.get('/product/:category',ProductController.getProductsByCategory);
-productRoutes.get('/product/:id',ProductController.getProductsById);
-productRoutes.put('/product/:id',ProductController.updateProduct);  
-productRoutes.delete('/product/:id',ProductController.deleteProduct);
+productRoutes.post('/product',auth,ProductController.createProduct);
+productRoutes.get('/product/:category',auth,ProductController.getProductsByCategory);
+productRoutes.get('/product/:id',auth,ProductController.getProductsById);
+productRoutes.put('/product/:id',auth,ProductController.updateProduct);  
+productRoutes.delete('/product/:id',auth,ProductController.deleteProduct);

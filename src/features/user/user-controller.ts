@@ -1,6 +1,7 @@
 import { Context } from "hono";
 import userModel from "./user-schema";
 import bcrypt from 'bcrypt';
+import CommonUtils from "../../utils/common-utils";
 
 namespace UserController{
     export const signUp = async (ctx : Context) => {
@@ -21,6 +22,15 @@ namespace UserController{
                 email:payload.email,
                 password:hashPassword
             });
+            
+            if(newUser){
+                const token = await CommonUtils.setUserCookie(newUser,ctx);
+                return ctx.json({
+                    message: 'User Created',
+                    user: newUser,
+                    token: token
+                })
+            }
 
             return ctx.json({message: 'User created', user: newUser},201);
 
@@ -50,7 +60,8 @@ namespace UserController{
             }
 
             if(isPasswordValid){
-                return ctx.json({message: 'User logged in',user},200);
+                const token = await CommonUtils.setUserCookie(user,ctx);
+                return ctx.json({message: 'User logged in',user,token},200);
             }
 
         }catch(err){

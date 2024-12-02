@@ -16,7 +16,7 @@ export const auth = async (ctx:Context,next:Next) => {
     }
 
     try{
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+        const decoded = jwt.verify(token, process.env.SECRET_KEY!) as JwtPayload;
         if(typeof decoded === 'object' && decoded != null){
             ctx.set("user", decoded);
             await next();
@@ -24,7 +24,7 @@ export const auth = async (ctx:Context,next:Next) => {
             throw new HTTPException(401, {message:"Unauthorized"});
         }
     }catch(err){
-        throw new HTTPException(401, {message:"Unauthorized"});
+        throw new HTTPException(401, {message:`Unauthorized ${err.message}`});
     }
 
 }
