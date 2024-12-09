@@ -12,7 +12,7 @@ namespace UserController{
             });
 
             if(user.length > 0){
-                return ctx.json({message: 'User already exists'},400);
+                return ctx.json({message: 'User already exists',status:400},200);
             }
             const saltRounds = 10;
             const hashPassword = await bcrypt.hash(payload.password,saltRounds);
@@ -26,17 +26,17 @@ namespace UserController{
             if(newUser){
                 const token = await CommonUtils.setUserCookie(newUser,ctx);
                 return ctx.json({
-                    message: 'User Created',
-                    user: newUser,
+                    status:200,
+                    user: {username:newUser.username,email:newUser.email},
                     token: token
                 })
             }
 
-            return ctx.json({message: 'User created', user: newUser},201);
+            return ctx.json({status:201, user: newUser},201);
 
         }catch(err){
             console.log(err);
-            return ctx.json({message: 'Internal server error'},500);
+            return ctx.json({message: 'Internal server error',status:500},500);
         }
     }
 
@@ -47,7 +47,7 @@ namespace UserController{
                 email: payload.email.toLowerCase()               
             });
             if(!user){
-                return ctx.json({message: 'User not found'},404);
+                return ctx.json({message: 'User not found',status:400},404);
             }
 
             const isPasswordValid = await bcrypt.compare(
@@ -56,17 +56,21 @@ namespace UserController{
             );
 
             if(!isPasswordValid){
-                return ctx.json({message: 'Invalid password'},400);
+                return ctx.json({message: 'Invalid password',status:400},400);
             }
 
             if(isPasswordValid){
                 const token = await CommonUtils.setUserCookie(user,ctx);
-                return ctx.json({message: 'User logged in',user,token},200);
+                return ctx.json({
+                    status:201,
+                    user:{username:user.username,email:user.email},
+                    token
+                },200);
             }
 
         }catch(err){
             console.log(err);
-            return ctx.json({message: 'Internal server error'},500);
+            return ctx.json({message: 'Internal server error',status:500},500);
         }
     }
 }
