@@ -43,12 +43,43 @@ namespace UserController{
     export const signIn = async (ctx:Context) => {
         try{
             let payload = await ctx.req.json();
+
+            if(payload.googleId){
+                const existUser = await userModel.findOne({
+                    googleId: payload.googleId
+                });
+
+                if(existUser){
+                    const token = await CommonUtils.setUserCookie(existUser,ctx);
+                    return ctx.json({
+                        status:200,
+                        user: {username:existUser.username,email:existUser.email},
+                        token: token
+                    })
+                }
+
+                const newUser = await userModel.create({
+                    username:payload.name,
+                    email:payload.email,
+                    googleId:payload.googleId
+                });
+                const token = await CommonUtils.setUserCookie(newUser,ctx);
+                return ctx.json({
+                    status:200,
+                    user: {username:newUser.username,email:newUser.email},
+                    token: token
+                })
+            }
+
             const user = await userModel.findOne({
                 email: payload.email.toLowerCase()               
             });
+
             if(!user){
                 return ctx.json({message: 'User not found',status:400},404);
             }
+
+            
 
             const isPasswordValid = await bcrypt.compare(
                 payload.password,
