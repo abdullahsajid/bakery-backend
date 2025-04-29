@@ -9,8 +9,10 @@
   "author": "Abdullah Sajid",
   "license": "ISC",
   "dependencies": {
+    "@binance/connector": "^3.6.1",
     "@hono/node-server": "^1.13.7",
     "bcrypt": "^5.1.1",
+    "crypto": "^1.0.1",
     "dotenv": "^16.4.5",
     "hono": "^4.6.12",
     "jsonwebtoken": "^9.0.2",
